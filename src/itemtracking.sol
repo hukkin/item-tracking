@@ -36,6 +36,7 @@ contract ItemTracking {
     itemNotCreated(id) {
         items[id].id = id;
         items[id].exists = true;
+        items[id].created = true;
         items[id].owner = msg.sender;
     }
     
