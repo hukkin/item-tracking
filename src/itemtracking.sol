@@ -49,6 +49,13 @@ contract ItemTracking {
         }
         _;
     }
+
+    modifier itemIsCombined(uint id) {
+        if (items[id].components.length < 2) {
+            throw;
+        }
+        _;
+    }
     
     // Create a new item
     function create(uint id)
@@ -63,6 +70,11 @@ contract ItemTracking {
     function combine(uint[] srcIds, uint resultId)
     itemsExists(srcIds)
     itemsOwnedBySender(srcIds) {
+        // Verify that at least 2 components are being combined
+        if (srcIds.length < 2) {
+            throw;
+        }
+
         for (uint i = 0; i < srcIds.length; i++) {
             items[srcIds[i]].exists = false;
         }
@@ -70,13 +82,17 @@ contract ItemTracking {
         items[resultId].components = srcIds;
     }
     
-    // Split item to create two new ones
-    function split(uint srcId, uint resultId1, uint resultId2)
+    // Split a combined item into its components
+    function split(uint srcId)
     itemExists(srcId)
-    itemOwnedBySender(srcId) {
+    itemOwnedBySender(srcId)
+    itemIsCombined(srcId) {
         items[srcId].exists = false;
-        create(resultId1);
-        create(resultId2);
+        for (uint i = 0; i < items[srcId].components.length; i++) {
+            uint componentId = items[srcId].components[i];
+            items[componentId].exists = true;
+            items[componentId].owner = items[srcId].owner;
+        }
     }
     
     // Handover ownership of the item
