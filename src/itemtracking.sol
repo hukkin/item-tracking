@@ -4,6 +4,7 @@ contract ItemTracking {
     struct Item {
         uint id;
         address owner;
+        uint[] components;
         bool exists;
         bool created;
     }
@@ -23,10 +24,28 @@ contract ItemTracking {
         }
         _;
     }
+
+    modifier itemsExists(uint[] ids) {
+        for (uint i = 0; i < ids.length; i++) {
+            if (items[ids[i]].exists == false) {
+                throw;
+            }
+        }
+        _;
+    }
     
     modifier itemOwnedBySender(uint id) {
         if (items[id].owner != msg.sender) {
             throw;
+        }
+        _;
+    }
+
+    modifier itemsOwnedBySender(uint[] ids) {
+        for (uint i = 0; i < ids.length; i++) {
+            if (items[ids[i]].owner != msg.sender) {
+                throw;
+            }
         }
         _;
     }
@@ -40,15 +59,15 @@ contract ItemTracking {
         items[id].owner = msg.sender;
     }
     
-    // Combine two items to create a new one
-    function combine(uint srcId1, uint srcId2, uint resultId)
-    itemExists(srcId1)
-    itemExists(srcId2)
-    itemOwnedBySender(srcId1)
-    itemOwnedBySender(srcId2) {
-        items[srcId1].exists = false;
-        items[srcId2].exists = false;
+    // Combine items to create a single new one
+    function combine(uint[] srcIds, uint resultId)
+    itemsExists(srcIds)
+    itemsOwnedBySender(srcIds) {
+        for (uint i = 0; i < srcIds.length; i++) {
+            items[srcIds[i]].exists = false;
+        }
         create(resultId);
+        items[resultId].components = srcIds;
     }
     
     // Split item to create two new ones
