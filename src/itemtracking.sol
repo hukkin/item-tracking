@@ -146,7 +146,7 @@ contract ItemTracking {
         }
 
         // Remove extracted components from parent item's component listing
-        for (uint i = 0; i < toBeExtractedIds.length; i++) {
+        for (i = 0; i < toBeExtractedIds.length; i++) {
 
             // Find out what the components index is in parent item's component
             // listing.
