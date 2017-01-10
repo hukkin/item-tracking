@@ -162,7 +162,7 @@ contract ItemTracking {
             // this by copying value from the last index to componentIndex and
             // then remove the last index.
             uint lastIndex = items[srcId].components.length - 1;
-            items[srcId].components[componentIndex] = items[srcId].components[lastIndex]
+            items[srcId].components[componentIndex] = items[srcId].components[lastIndex];
             delete items[srcId].components[lastIndex];
             items[srcId].components.length--;
         }
