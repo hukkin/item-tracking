@@ -25,7 +25,7 @@ contract ItemTracking {
         _;
     }
 
-    modifier itemsExists(uint[] ids) {
+    modifier itemsExist(uint[] ids) {
         for (uint i = 0; i < ids.length; i++) {
             if (items[ids[i]].exists == false) {
                 throw;
@@ -68,7 +68,7 @@ contract ItemTracking {
     
     // Combine items to create a single new one
     function combine(uint[] srcIds, uint resultId)
-    itemsExists(srcIds)
+    itemsExist(srcIds)
     itemsOwnedBySender(srcIds) {
         // Verify that at least 2 components are being combined
         if (srcIds.length < 2) {
