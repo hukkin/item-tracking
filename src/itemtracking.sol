@@ -177,7 +177,7 @@ contract ItemTracking {
 
     // Return number of components for a given item
     function getComponentCount(uint id) itemCreated(id) returns (uint) {
-        return items[srcId].components.length;
+        return items[id].components.length;
     }
 
     // Return ID of a component of a given parent item at given index.
