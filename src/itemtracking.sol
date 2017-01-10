@@ -10,6 +10,13 @@ contract ItemTracking {
     }
     
     mapping(uint => Item) items;
+
+    modifier itemCreated(uint id) {
+        if (items[id].created == false) {
+            throw;
+        }
+        _;
+    }
     
     modifier itemNotCreated(uint id) {
         if (items[id].created) {
@@ -167,4 +174,36 @@ contract ItemTracking {
     itemOwnedBySender(id) {
         items[id].owner = receiver;
     }
+
+    // Return number of components for a given item
+    function getComponentCount(uint id) itemCreated(id) returns (uint) {
+        return items[srcId].components.length;
+    }
+
+    // Return ID of a component of a given parent item at given index.
+    function getComponentId(uint parentId, uint componentIndex)
+    itemCreated(parentId)
+    itemIsCombined(parentId)
+    returns (uint) {
+        if (componentIndex >= items[parentId].components.length) {
+            throw;
+        }
+        return items[parentId].components[componentIndex];
+    }
+
+    // Return owner of a given item
+    function getOwner(uint id) itemCreated(id) returns (address) {
+        return items[id].owner;
+    }
+
+    // Return exists status of a given item
+    function getExistsStatus(uint id) itemCreated(id) returns (bool) {
+        return items[id].exists;
+    }
+
+    // Return created status of a given item
+    function getCreatedStatus(uint id) returns (bool) {
+        return items[id].created;
+    }
+
 }
