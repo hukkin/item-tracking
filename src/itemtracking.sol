@@ -121,6 +121,30 @@ contract ItemTracking {
         }
     }
 
+    // A private helper function for removing a component from the components
+    // array of an item. Doesn't handle error cases (e.g. invalid IDs or
+    // componentId not a component of itemID). The caller should make sure that
+    // input is valid.
+    function removeComponent(uint itemId, uint componentId) private {
+        // Find out what the components index is in parent item's component
+        // listing.
+        uint componentIndex = 0;
+        for (uint j = 0; j < items[itemId].components.length; j++) {
+            if (componentId == items[itemId].components[j]) {
+                componentIndex = j;
+                break;
+            }
+        }
+
+        // Remove item from componentIndex. To not bloat the array, let's do
+        // this by copying value from the last index to componentIndex and
+        // then remove the last index.
+        uint lastIndex = items[itemId].components.length - 1;
+        items[itemId].components[componentIndex] = items[itemId].components[lastIndex];
+        delete items[itemId].components[lastIndex];
+        items[itemId].components.length--;
+    }
+
     // Extract the sub-components listed in the parameter. Leave the rest of the
     // components in the parent item. Parent item maintains its old ID.
     // If less than 2 components would remain in the parent component, then
@@ -138,33 +162,14 @@ contract ItemTracking {
         }
 
         // Make extracted components exist and grant ownership to owner of
-        // parent item.
+        // parent item. Remove extracted components from parent item's component
+        // listing
         for (uint i = 0; i < toBeExtractedIds.length; i++) {
             uint componentId = toBeExtractedIds[i];
             items[componentId].exists = true;
             items[componentId].owner = items[srcId].owner;
-        }
 
-        // Remove extracted components from parent item's component listing
-        for (i = 0; i < toBeExtractedIds.length; i++) {
-
-            // Find out what the components index is in parent item's component
-            // listing.
-            uint componentIndex = 0;
-            for (uint j = 0; j < items[srcId].components.length; j++) {
-                if (componentId == items[srcId].components[j]) {
-                    componentIndex = j;
-                    break;
-                }
-            }
-
-            // Remove item from componentIndex. To not bloat the array, let's do
-            // this by copying value from the last index to componentIndex and
-            // then remove the last index.
-            uint lastIndex = items[srcId].components.length - 1;
-            items[srcId].components[componentIndex] = items[srcId].components[lastIndex];
-            delete items[srcId].components[lastIndex];
-            items[srcId].components.length--;
+            removeComponent(srcId, componentId);
         }
     }
     
