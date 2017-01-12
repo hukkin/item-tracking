@@ -181,7 +181,9 @@ contract ItemTracking {
     }
 
     // Return number of components for a given item
-    function getComponentCount(uint id) itemCreated(id) returns (uint) {
+    function getComponentCount(uint id)
+    itemCreated(id)
+    constant returns (uint) {
         return items[id].components.length;
     }
 
@@ -189,7 +191,7 @@ contract ItemTracking {
     function getComponentId(uint parentId, uint componentIndex)
     itemCreated(parentId)
     itemIsCombined(parentId)
-    returns (uint) {
+    constant returns (uint) {
         if (componentIndex >= items[parentId].components.length) {
             throw;
         }
@@ -197,17 +199,17 @@ contract ItemTracking {
     }
 
     // Return owner of a given item
-    function getOwner(uint id) itemCreated(id) returns (address) {
+    function getOwner(uint id) itemCreated(id) constant returns (address) {
         return items[id].owner;
     }
 
     // Return exists status of a given item
-    function getExistsStatus(uint id) itemCreated(id) returns (bool) {
+    function getExistsStatus(uint id) itemCreated(id) constant returns (bool) {
         return items[id].exists;
     }
 
     // Return created status of a given item
-    function getCreatedStatus(uint id) returns (bool) {
+    function getCreatedStatus(uint id) constant returns (bool) {
         return items[id].created;
     }
 
